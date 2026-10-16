@@ -1,1 +1,117 @@
 
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f5f0">
+<title>Little Artistz Manager</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f8f5f0;color:#302f2c;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+header{padding:26px 20px 18px}
+.brand{font-size:12px;letter-spacing:2px;color:#8575a8;font-weight:700}
+h1{font-size:26px;margin:8px 0}
+p{line-height:1.6}
+main{padding:0 16px 100px;max-width:650px;margin:auto}
+.card{background:white;border:1px solid #e9e3dc;border-radius:18px;padding:18px;margin-bottom:14px}
+.hero{background:#eee8f5;border:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:white;border:1px solid #e9e3dc;border-radius:15px;padding:15px}
+.stat small{color:#77736d}
+.stat strong{display:block;font-size:23px;margin-top:8px}
+h2{font-size:18px;margin:0 0 12px}
+.muted{color:#77736d;font-size:13px}
+button,input,select{font:inherit}
+button{border:0;border-radius:11px;padding:12px;background:#8575a8;color:white}
+input,select{width:100%;padding:12px;border:1px solid #e9e3dc;border-radius:10px;background:white;margin:6px 0 14px}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e9e3dc;display:flex;justify-content:space-around;padding:10px 2px calc(10px + env(safe-area-inset-bottom))}
+nav button{background:transparent;color:#77736d;font-size:11px;padding:7px 4px}
+nav button.active{color:#8575a8;font-weight:bold}
+nav span{display:block;font-size:19px;margin-bottom:3px}
+.page.hidden{display:none}
+.notice{padding:12px;background:#fff5dd;border-radius:12px;font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">LITTLE ARTISTZ</div>
+  <h1>Studio Manager</h1>
+  <div class="muted">Your teaching day, organised.</div>
+</header>
+<main>
+<section class="page" id="today">
+  <div class="card hero">
+    <div class="brand">MY STUDIO</div>
+    <h2 style="margin-top:10px">Hello, Miss YanYan ♡</h2>
+    <p>一個地方管理學生、課堂、付款及每月收支。</p>
+  </div>
+  <div class="grid">
+    <div class="stat"><small>學生人數</small><strong>0</strong></div>
+    <div class="stat"><small>課堂紀錄</small><strong>0</strong></div>
+    <div class="stat"><small>本月實收</small><strong>$0</strong></div>
+    <div class="stat"><small>未付款</small><strong>$0</strong></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h2>今日課堂</h2>
+    <p class="muted">新增學生及安排課堂後，今日班表會顯示在這裡。</p>
+  </div>
+  <div class="notice">目前是介面測試版，尚未加入真正的學生資料儲存及財務計算。請勿輸入真實學生資料。</div>
+</section>
+<section class="page hidden" id="lessons">
+  <div class="card">
+    <h2>課堂及恆常班</h2>
+    <p>設定每星期固定上課日，並選擇建立班表的結束日期。</p>
+    <p class="muted">稍後加入自動排堂、停課、補堂及個別課堂主題。</p>
+  </div>
+</section>
+<section class="page hidden" id="students">
+  <div class="card">
+    <h2>學生管理</h2>
+    <p>每位學生可設定年齡、上課地點、個別收費及付款方式。</p>
+    <p class="muted">學生新增功能尚未啟用。</p>
+  </div>
+</section>
+<section class="page hidden" id="finance">
+  <div class="card">
+    <h2>每月財務</h2>
+    <label for="month">選擇月份</label>
+    <input id="month" type="month">
+    <div class="grid">
+      <div class="stat"><small>本月實收</small><strong>$0</strong></div>
+      <div class="stat"><small>未付款</small><strong>$0</strong></div>
+    </div>
+    <p class="muted">每位學生的上堂數及月結明細會在後續版本加入。</p>
+  </div>
+</section>
+<section class="page hidden" id="settings">
+  <div class="card">
+    <h2>設定</h2>
+    <p>班表建立日期由你自行選擇。</p>
+    <p class="muted">資料加密、備份及還原功能尚未完成。</p>
+  </div>
+</section>
+</main>
+<nav>
+  <button class="active" data-page="today" onclick="showPage('today')"><span>⌂</span>今日</button>
+  <button data-page="lessons" onclick="showPage('lessons')"><span>▦</span>課堂</button>
+  <button data-page="students" onclick="showPage('students')"><span>♙</span>學生</button>
+  <button data-page="finance" onclick="showPage('finance')"><span>＄</span>財務</button>
+  <button data-page="settings" onclick="showPage('settings')"><span>⚙</span>設定</button>
+</nav>
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){
+    p.classList.toggle('hidden',p.id!==id);
+  });
+  document.querySelectorAll('nav button').forEach(function(b){
+    b.classList.toggle('active',b.dataset.page===id);
+  });
+  window.scrollTo(0,0);
+}
+var m=document.getElementById('month');
+var d=new Date();
+m.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+</script>
+</body>
+</html>
