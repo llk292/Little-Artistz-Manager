@@ -4,287 +4,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f8f5f0">
+<meta name="theme-color" content="#f8f5ef">
 <title>Little Artistz Manager</title>
 <style>
+:root{--bg:#f8f5ef;--card:#fff;--ink:#39362f;--muted:#817b70;--accent:#927c63;--line:#e8e0d5;--green:#647d68;--red:#ad6358}
 *{box-sizing:border-box}
-body{margin:0;background:#f8f5f0;color:#302f2c;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
-header{padding:24px 18px 16px}
-.brand{font-size:11px;letter-spacing:2px;color:#8575a8;font-weight:800}
-h1{font-size:26px;margin:8px 0}
-h2{font-size:18px;margin:0 0 14px}
-p{line-height:1.6}
-main{padding:0 14px 100px;max-width:650px;margin:auto}
-.card{background:white;border:1px solid #e9e3dc;border-radius:17px;padding:17px;margin-bottom:13px}
-.hero{background:#eee8f5;border:0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.stat{background:white;border:1px solid #e9e3dc;border-radius:14px;padding:13px}
-.stat small{color:#77736d;font-size:12px}
-.stat strong{display:block;font-size:22px;margin-top:7px;overflow-wrap:anywhere}
-.muted{color:#77736d;font-size:13px}
-label{display:block;font-size:13px;font-weight:650;margin-top:9px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #ddd6cd;border-radius:10px;background:#fff;font:inherit;margin:6px 0 9px;color:#302f2c}
-button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:11px 14px;background:#8575a8;color:white}
-button.secondary{background:#eee8f5;color:#51446b}
-button.danger{background:#f8e8e5;color:#8b3931}
-button:disabled{opacity:.5}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.pill{display:inline-block;border-radius:20px;padding:4px 9px;background:#eee8f5;color:#51446b;font-size:11px;margin:3px 3px 3px 0}
-.empty{padding:18px 0;text-align:center;color:#77736d;font-size:14px}
-.notice{padding:12px;background:#fff4dc;border-radius:11px;font-size:12px;line-height:1.6;margin-top:12px}
-.page.hidden{display:none}
-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e9e3dc;display:flex;justify-content:space-around;padding:8px 2px calc(8px + env(safe-area-inset-bottom));z-index:5}
-nav button{background:transparent;color:#77736d;font-size:11px;padding:5px 4px;flex:1}
-nav button.active{color:#8575a8;font-weight:800}
-nav span{display:block;font-size:19px;margin-bottom:3px}
-hr{border:0;border-top:1px solid #eee8e1;margin:14px 0}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px}
+header{padding:25px 18px 18px;background:#f1e9de;border-bottom:1px solid var(--line)}
+.brand{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:700}
+h1{font-size:25px;margin:8px 0 4px;font-weight:600}
+header p{color:var(--muted);margin:0;font-size:13px}
+nav{display:flex;gap:7px;padding:12px;overflow-x:auto;background:var(--bg);position:sticky;top:0;z-index:2}
+nav button{white-space:nowrap;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:20px;padding:10px 14px}
+nav button.active{background:var(--ink);color:#fff}
+main{padding:10px 14px 100px;max-width:760px;margin:auto}
+h2{font-size:21px;margin:12px 0 6px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:#fff;font:inherit;color:var(--ink)}
+textarea{min-height:70px}
+button{font:inherit;cursor:pointer}
+.primary,.secondary,.danger{border:0;border-radius:10px;padding:11px 14px;margin-top:12px}
+.primary{background:var(--ink);color:white}
+.secondary{background:#eee7dd;color:var(--ink)}
+.danger{background:#f7e9e6;color:var(--red)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item-title{font-size:17px;font-weight:600}
+.meta{color:var(--muted);font-size:13px;line-height:1.7;margin-top:5px;overflow-wrap:anywhere}
+.badge{display:inline-block;background:#eee7dd;border-radius:20px;padding:4px 8px;font-size:12px;margin-top:6px}
+.empty{color:var(--muted);padding:18px 2px;text-align:center}
+.notice{background:#f5eee1;border-radius:12px;padding:12px;font-size:13px;line-height:1.6}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.actions button{margin-top:10px}
+footer{text-align:center;font-size:11px;color:var(--muted);padding:20px}
+@media(max-width:420px){.row{grid-template-columns:1fr}header{padding-top:20px}}
 </style>
 </head>
 <body>
 <header>
   <div class="brand">LITTLE ARTISTZ</div>
   <h1>Studio Manager</h1>
-  <div class="muted">Your teaching day, organised.</div>
+  <p>Your little studio, thoughtfully organised ♡</p>
 </header>
-<main>
-<section class="page" id="today">
-  <div class="card hero">
-    <div class="brand">MY STUDIO</div>
-    <h2 style="margin-top:10px">Hello, Miss YanYan ♡</h2>
-    <p>管理學生、課堂、付款及每月收支。</p>
-  </div>
-  <div class="grid">
-    <div class="stat"><small>學生人數</small><strong id="statStudents">0</strong></div>
-    <div class="stat"><small>課堂紀錄</small><strong>0</strong></div>
-    <div class="stat"><small>本月實收</small><strong>$0</strong></div>
-    <div class="stat"><small>未付款</small><strong>$0</strong></div>
-  </div>
-  <div class="card" style="margin-top:13px">
-    <h2>今日課堂</h2>
-    <p class="muted">課堂及自動排堂功能會在下一階段加入。</p>
-    <button onclick="showPage('students')">前往學生管理</button>
-  </div>
-</section>
 
-<section class="page hidden" id="lessons">
-  <div class="card">
-    <h2>課堂及恆常班</h2>
-    <p>下一階段會加入每星期固定上課日、時間、學生及班表建立截止日期。</p>
-    <p class="muted">停課時會保留紀錄，並可標示取消。</p>
-  </div>
-</section>
-
-<section class="page hidden" id="students">
-  <div class="card">
-    <div class="row">
-      <div><h2>學生管理</h2><div class="muted">建立及管理學生基本資料</div></div>
-      <button onclick="newStudent()">＋ 新增</button>
-    </div>
-    <input id="search" placeholder="搜尋學生姓名或上課地點" oninput="renderStudents()">
-    <div class="grid">
-      <div class="stat"><small>學生總數</small><strong id="studentCount">0</strong></div>
-      <div class="stat"><small>現正上課</small><strong id="activeCount">0</strong></div>
-    </div>
-    <div id="studentList" style="margin-top:15px"></div>
-  </div>
-
-  <div class="card" id="studentFormCard" hidden>
-    <h2 id="formTitle">新增學生</h2>
-    <form id="studentForm">
-      <input type="hidden" id="studentId">
-      <label for="name">學生姓名或稱呼 *</label>
-      <input id="name" required maxlength="80" placeholder="例如：學生 A（測試）">
-      <label for="age">年齡</label>
-      <input id="age" type="number" min="0" max="100" step="0.5" placeholder="例如：4">
-      <label for="location">上課地點</label>
-      <input id="location" maxlength="120" placeholder="例如：九龍站">
-      <label for="classType">上課形式</label>
-      <select id="classType">
-        <option>小組班</option><option>一對一</option>
-      </select>
-      <label for="fee">每堂標準收費（HKD）*</label>
-      <input id="fee" type="number" required min="0" max="100000" step="1" placeholder="例如：200">
-      <label for="paymentType">付款方式</label>
-      <select id="paymentType">
-        <option value="single">單堂付款</option>
-        <option value="package4">4 堂套票</option>
-        <option value="package10">10 堂套票</option>
-      </select>
-      <label for="packageRemaining">目前剩餘套票堂數（新學生可填 0）</label>
-      <input id="packageRemaining" type="number" min="0" max="1000" step="1" value="0">
-      <label for="status">學生狀態</label>
-      <select id="status">
-        <option>Active</option><option>Waiting List</option><option>Paused</option><option>Finished</option><option>Trial</option>
-      </select>
-      <label for="notes">備註（請勿輸入敏感資料）</label>
-      <textarea id="notes" rows="2" maxlength="500" placeholder="例如：收費特別安排"></textarea>
-      <div class="actions">
-        <button type="submit">儲存學生</button>
-        <button type="button" class="secondary" onclick="closeForm()">取消</button>
-      </div>
-    </form>
-    <p class="muted">此版本只適合測試，不要輸入真實學生資料。</p>
-  </div>
-</section>
-
-<section class="page hidden" id="finance">
-  <div class="card">
-    <h2>每月財務</h2>
-    <p>本階段先建立學生資料。課堂收入、欠款及月結計算會在課堂及付款功能完成後加入。</p>
-    <div class="grid">
-      <div class="stat"><small>本月實收</small><strong>$0</strong></div>
-      <div class="stat"><small>未付款</small><strong>$0</strong></div>
-    </div>
-  </div>
-</section>
-
-<section class="page hidden" id="settings">
-  <div class="card">
-    <h2>設定及資料保護</h2>
-    <p>目前測試資料會儲存在此瀏覽器的本機儲存空間，尚未加密。</p>
-    <p class="muted">清除 Safari 網站資料可能令測試紀錄消失。加密備份及還原功能尚未完成。</p>
-    <div class="notice">網站程式公開於 GitHub Pages。請勿輸入真實學生姓名、聯絡資料或其他私人資料。</div>
-  </div>
-</section>
-</main>
-
-<nav>
-  <button class="active" data-page="today" onclick="showPage('today')"><span>⌂</span>今日</button>
-  <button data-page="lessons" onclick="showPage('lessons')"><span>▦</span>課堂</button>
-  <button data-page="students" onclick="showPage('students')"><span>♙</span>學生</button>
-  <button data-page="finance" onclick="showPage('finance')"><span>＄</span>財務</button>
-  <button data-page="settings" onclick="showPage('settings')"><span>⚙</span>設定</button>
+<nav id="nav">
+  <button data-page="today" class="active">Today</button>
+  <button data-page="students">Students</button>
+  <button data-page="recurring">Recurring Classes</button>
+  <button data-page="lessons">Lessons</button>
+  <button data-page="backup">Backup</button>
 </nav>
+<main id="app"></main>
+<footer>Little Artistz · Development version · Local browser storage</footer>
 
 <script>
-const STORAGE_KEY = 'littleArtistzManager_demoStudents_v1';
-let students = [];
-try {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  students = saved ? JSON.parse(saved) : [];
-  if (!Array.isArray(students)) students = [];
-} catch (e) {
-  students = [];
-}
+(function(){
+"use strict";
 
-function saveStudents() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-    return true;
-  } catch (e) {
-    alert('未能儲存。請檢查瀏覽器儲存空間設定。');
-    return false;
-  }
+const KEYS={
+ students:"littleArtistzManager_demoStudents_v1",
+ rules:"littleArtistzManager_recurringRules_v1",
+ lessons:"littleArtistzManager_lessons_v1"
+};
+
+function load(key){
+  try{
+    const value=JSON.parse(localStorage.getItem(key)||"[]");
+    return Array.isArray(value)?value:[];
+  }catch(e){return []}
 }
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.toggle('hidden', p.id !== id));
-  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.page === id));
-  window.scrollTo(0, 0);
-  if (id === 'students') renderStudents();
+let students=load(KEYS.students);
+let rules=load(KEYS.rules);
+let lessons=load(KEYS.lessons);
+let page="today";
+let editingStudent=null;
+
+const app=document.getElementById("app");
+const weekdays=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const todayISO=()=>localDate(new Date());
+function localDate(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
-function newStudent() {
-  document.getElementById('studentForm').reset();
-  document.getElementById('studentId').value = '';
-  document.getElementById('packageRemaining').value = '0';
-  document.getElementById('formTitle').textContent = '新增學生';
-  document.getElementById('studentFormCard').hidden = false;
-  document.getElementById('name').focus();
-  document.getElementById('studentFormCard').scrollIntoView({behavior:'smooth', block:'start'});
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function esc(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
-function closeForm() {
-  document.getElementById('studentFormCard').hidden = true;
+function save(){
+  localStorage.setItem(KEYS.students,JSON.stringify(students));
+  localStorage.setItem(KEYS.rules,JSON.stringify(rules));
+  localStorage.setItem(KEYS.lessons,JSON.stringify(lessons));
 }
-function escapeHTML(value) {
-  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function studentName(id){
+  const s=students.find(x=>String(x.id)===String(id));
+  return s?s.name:"Unknown student";
 }
-function paymentLabel(value) {
-  return ({single:'單堂付款',package4:'4 堂套票',package10:'10 堂套票'})[value] || value;
+function money(n){return "$"+(Number(n)||0)}
+function setPage(p){
+  page=p;
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===p));
+  render();
 }
-function renderStudents() {
-  const q = document.getElementById('search').value.trim().toLowerCase();
-  const shown = students.filter(s => (s.name+' '+s.location).toLowerCase().includes(q));
-  document.getElementById('studentCount').textContent = students.length;
-  document.getElementById('activeCount').textContent = students.filter(s => s.status === 'Active').length;
-  document.getElementById('statStudents').textContent = students.length;
-  const list = document.getElementById('studentList');
-  if (!shown.length) {
-    list.innerHTML = '<div class="empty">'+(students.length ? '找不到符合的學生。' : '目前未有學生。撳「＋ 新增」建立測試學生。')+'</div>';
-    return;
-  }
-  list.innerHTML = shown.map(s => `
-    <div class="card" style="margin:12px 0 0;padding:14px">
-      <div class="row">
-        <div style="min-width:0;flex:1">
-          <strong>${escapeHTML(s.name)}</strong>
-          <div class="muted">${s.age ? escapeHTML(s.age)+' 歲 · ' : ''}${escapeHTML(s.location || '未設定地點')}</div>
-        </div>
-        <strong>$${Number(s.fee).toLocaleString('en-HK')}</strong>
-      </div>
-      <div style="margin:7px 0">
-        <span class="pill">${escapeHTML(s.classType)}</span>
-        <span class="pill">${escapeHTML(paymentLabel(s.paymentType))}</span>
-        <span class="pill">${escapeHTML(s.status)}</span>
-      </div>
-      ${s.paymentType !== 'single' ? '<div class="muted">目前剩餘套票堂數：'+Number(s.packageRemaining || 0)+'</div>' : ''}
-      ${s.notes ? '<p class="muted">'+escapeHTML(s.notes)+'</p>' : ''}
-      <div class="actions" style="margin-top:10px">
-        <button class="secondary" onclick="editStudent('${s.id}')">編輯</button>
-        <button class="danger" onclick="deleteStudent('${s.id}')">刪除測試紀錄</button>
-      </div>
-    </div>`).join('');
-}
-function editStudent(id) {
-  const s = students.find(x => x.id === id);
-  if (!s) return;
-  document.getElementById('studentId').value = s.id;
-  document.getElementById('name').value = s.name;
-  document.getElementById('age').value = s.age ?? '';
-  document.getElementById('location').value = s.location ?? '';
-  document.getElementById('classType').value = s.classType;
-  document.getElementById('fee').value = s.fee;
-  document.getElementById('paymentType').value = s.paymentType;
-  document.getElementById('packageRemaining').value = s.packageRemaining || 0;
-  document.getElementById('status').value = s.status;
-  document.getElementById('notes').value = s.notes || '';
-  document.getElementById('formTitle').textContent = '編輯學生';
-  document.getElementById('studentFormCard').hidden = false;
-  document.getElementById('studentFormCard').scrollIntoView({behavior:'smooth', block:'start'});
-}
-function deleteStudent(id) {
-  if (!confirm('確定刪除這筆測試學生紀錄？此操作無法復原。')) return;
-  students = students.filter(s => s.id !== id);
-  if (saveStudents()) renderStudents();
-}
-document.getElementById('studentForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const id = document.getElementById('studentId').value || (Date.now().toString(36) + Math.random().toString(36).slice(2,8));
-  const existing = students.find(s => s.id === id);
-  const s = {
-    id,
-    name: document.getElementById('name').value.trim(),
-    age: document.getElementById('age').value,
-    location: document.getElementById('location').value.trim(),
-    classType: document.getElementById('classType').value,
-    fee: Number(document.getElementById('fee').value),
-    paymentType: document.getElementById('paymentType').value,
-    packageRemaining: Number(document.getElementById('packageRemaining').value || 0),
-    status: document.getElementById('status').value,
-    notes: document.getElementById('notes').value.trim()
-  };
-  if (!s.name || !Number.isFinite(s.fee) || s.fee < 0) {
-    alert('請填寫學生稱呼及有效的每堂收費。');
-    return;
-  }
-  if (existing) students = students.map(x => x.id === id ? s : x);
-  else students.push(s);
-  if (saveStudents()) {
-    closeForm();
-    renderStudents();
-    alert('測試學生已儲存。');
-  }
+document.getElementById("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-page]");
+  if(b)setPage(b.dataset.page);
 });
-renderStudents();
+function field(label,name,value="",type="text",required=false){
+  return `<label>${label}</label><input name="${name}" type="${type}" value="${esc(value)}" ${required?"required":""}>`;
+}
+function selectField(label,name,options,value){
+  return `<label>${label}</label><select name="${name}">${options.map(o=>`<option value="${esc(o[0])}" ${String(o[0])===String(value)?"selected":""}>${esc(o[1])}</option>`).join("")}</select>`;
+}
+function studentOptions(){
+  return students.map(s=>[s.id,s.name]);
+}
+function render(){
+  if(page==="today")renderToday();
+  if(page==="students")renderStudents();
+  if(page==="recurring")renderRecurring();
+  if(page==="lessons")renderLessons();
+  if(page==="backup")renderBackup();
+}
+function renderToday(){
+  const upcoming=lessons.filter(l=>l.status!=="Cancelled"&&l.date>=todayISO()).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,8);
+  app.innerHTML=`<h2>Hello, Miss YanYan ♡</h2>
+  <div class="sub">Your studio at a glance</div>
+  <div class="row">
+    <div class="card"><div class="meta">Active students</div><h2>${students.filter(s=>s.status==="Active").length}</h2></div>
+    <div class="card"><div class="meta">Saved lessons</div><h2>${lessons.length}</h2></div>
+  </div>
+  <div class="card"><div class="item-title">Upcoming lessons</div>
+  ${upcoming.length?upcoming.map(l=>`<div class="card"><b>${esc(l.date)} · ${esc(l.time||"Time not set")}</b><div>${esc(studentName(l.studentId))}</div><div class="meta">${esc(l.theme||"Theme not set")} · ${esc(l.location||"Location not set")}</div></div>`).join(""):`<div class="empty">No upcoming lessons yet.</div>`}
+  </div>
+  <div class="notice">Start by adding students, then create a recurring class and generate lessons for your chosen date range.</div>`;
+}
+function renderStudents(){
+  const editing=editingStudent?students.find(s=>String(s.id)===String(editingStudent)):null;
+  app.innerHTML=`<h2>Students</h2><div class="sub">Manage student profiles and individual lesson fees.</div>
+  <div class="card"><div class="item-title">${editing?"Edit student":"Add a student"}</div>
+  <form id="studentForm">
+  ${field("Student name","name",editing?.name||"", "text",true)}
+  <div class="row">${field("Age","age",editing?.age||"","text")}
+  ${field("Location","location",editing?.location||"")}</div>
+  <div class="row">
+  ${selectField("Class type","classType",[["group","Small group"],["1to1","1-to-1"]],editing?.classType||"group")}
+  ${field("Fee per lesson ($)","fee",editing?.fee??200,"number",true)}
+  </div>
+  <div class="row">
+  ${selectField("Payment type","paymentType",[["single","Single lesson"],["package4","4-lesson package"],["package10","10-lesson package"]],editing?.paymentType||"single")}
+  ${field("Package lessons remaining","packageRemaining",editing?.packageRemaining??0,"number")}
+  </div>
+  ${selectField("Status","status",[["Active","Active"],["Waiting List","Waiting List"],["Paused","Paused"],["Finished","Finished"],["Trial","Trial"]],editing?.status||"Active")}
+  <label>Notes</label><textarea name="notes">${esc(editing?.notes||"")}</textarea>
+  <button class="primary" type="submit">${editing?"Save changes":"Add student"}</button>
+  ${editing?'<button class="secondary" type="button" id="stopEdit">Cancel editing</button>':""}
+  </form></div>
+  <div class="card"><label>Search students</label><input id="studentSearch" placeholder="Search by name or location">
+  <div id="studentList">${studentList(students)}</div></div>`;
+  document.getElementById("studentForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const f=new FormData(e.currentTarget);
+    const data={
+      name:String(f.get("name")).trim(),age:String(f.get("age")||""),
+      location:String(f.get("location")||""),classType:f.get("classType"),
+      fee:Number(f.get("fee"))||0,paymentType:f.get("paymentType"),
+      packageRemaining:Math.max(0,Number(f.get("packageRemaining"))||0),
+      status:f.get("status"),notes:String(f.get("notes")||"")
+    };
+    if(!data.name){alert("Please enter a student name.");return}
+    if(editing){
+      Object.assign(editing,data);
+    }else{
+      students.push({id:uid(),...data});
+    }
+    editingStudent=null;save();renderStudents();
+  });
+  const stop=document.getElementById("stopEdit");
+  if(stop)stop.onclick=()=>{editingStudent=null;renderStudents()};
+  document.getElementById("studentSearch").addEventListener("input",e=>{
+    const q=e.target.value.toLowerCase();
+    document.getElementById("studentList").innerHTML=studentList(students.filter(s=>(s.name+" "+(s.location||"")).toLowerCase().includes(q)));
+  });
+  bindStudentActions();
+}
+function studentList(list){
+  if(!list.length)return '<div class="empty">No students found.</div>';
+  return list.map(s=>`<div class="card">
+  <div class="item-title">${esc(s.name)}</div>
+  <div class="meta">Age: ${esc(s.age||"—")} · ${esc(s.location||"No location")}<br>
+  ${esc(s.classType==="1to1"?"1-to-1":"Small group")} · ${money(s.fee)} per lesson<br>
+  ${esc(({single:"Single lesson",package4:"4-lesson package",package10:"10-lesson package"})[s.paymentType]||s.paymentType||"Payment type not set")}
+  ${s.paymentType==="single"?"":` · ${Number(s.packageRemaining)||0} remaining`}<br>
+  Status: ${esc(s.status||"Active")}</div>
+  ${s.notes?`<div class="meta">${esc(s.notes)}</div>`:""}
+  <div class="actions"><button class="secondary" data-edit-student="${esc(s.id)}">Edit</button><button class="danger" data-delete-student="${esc(s.id)}">Delete</button></div>
+  </div>`).join("");
+}
+function bindStudentActions(){
+  document.querySelectorAll("[data-edit-student]").forEach(b=>b.onclick=()=>{
+    editingStudent=b.dataset.editStudent;renderStudents();window.scrollTo(0,0);
+  });
+  document.querySelectorAll("[data-delete-student]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.deleteStudent;
+    if(lessons.some(l=>String(l.studentId)===String(id))){
+      alert("This student has lesson records. To preserve lesson history, change the student's status instead of deleting them.");return;
+    }
+    if(confirm("Delete this test student?")){
+      students=students.filter(s=>String(s.id)!==String(id));save();renderStudents();
+    }
+  });
+}
+function renderRecurring(){
+  if(!students.length){
+    app.innerHTML='<h2>Recurring Classes</h2><div class="notice">Please add a student first, then return here to create a recurring class.</div>';return;
+  }
+  app.innerHTML=`<h2>Recurring Classes</h2><div class="sub">Set a weekly class and generate lessons for a date range.</div>
+  <div class="card"><div class="item-title">Create recurring class</div>
+  <form id="ruleForm">
+  ${selectField("Student","studentId",studentOptions(),"")}
+  ${selectField("Weekly class day","weekday",weekdays.map((d,i)=>[i,d]),1)}
+  <div class="row">${field("Class time","time","16:00","time",true)}${field("Location","location","","text",true)}</div>
+  ${field("Lesson theme","theme","","text",true)}
+  <div class="row">${field("Generate from","startDate",todayISO(),"date",true)}${field("Generate until","endDate",todayISO(),"date",true)}</div>
+  <button class="primary" type="submit">Create class & generate lessons</button>
+  </form></div>
+  <div id="ruleList">${ruleList()}</div>
+  <div class="notice">Generating lessons again for the same class will skip dates already created. Edit or cancel individual lessons from the Lessons tab.</div>`;
+  document.getElementById("ruleForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const f=new FormData(e.currentTarget);
+    const start=String(f.get("startDate")),end=String(f.get("endDate"));
+    if(end<start){alert("The end date must be on or after the start date.");return}
+    const student=students.find(s=>String(s.id)===String(f.get("studentId")));
+    if(!student){alert("Please select a student.");return}
+    const rule={
+      id:uid(),studentId:student.id,weekday:Number(f.get("weekday")),
+      time:String(f.get("time")),location:String(f.get("location")).trim(),
+      theme:String(f.get("theme")).trim(),startDate:start,endDate:end,active:true
+    };
+    rules.push(rule);
+    const added=generateLessons(rule,start,end);
+    save();renderRecurring();
+    alert("Recurring class saved. "+added+" new lesson(s) generated.");
+  });
+  bindRuleActions();
+}
+function ruleList(){
+  if(!rules.length)return '<div class="empty">No recurring classes yet.</div>';
+  return rules.map(r=>`<div class="card">
+  <div class="item-title">${esc(studentName(r.studentId))}</div>
+  <div class="meta">${esc(weekdays[r.weekday]||"")} · ${esc(r.time)}<br>${esc(r.location)}<br>Theme: ${esc(r.theme)}<br>Initial date range: ${esc(r.startDate)} to ${esc(r.endDate)}</div>
+  <span class="badge">${r.active?"Active":"Paused"}</span>
+  <div class="actions">
+  <button class="secondary" data-extend-rule="${esc(r.id)}">Generate more dates</button>
+  <button class="secondary" data-toggle-rule="${esc(r.id)}">${r.active?"Pause rule":"Activate rule"}</button>
+  </div></div>`).join("");
+}
+function bindRuleActions(){
+  document.querySelectorAll("[data-toggle-rule]").forEach(b=>b.onclick=()=>{
+    const r=rules.find(x=>String(x.id)===b.dataset.toggleRule);if(!r)return;
+    r.active=!r.active;save();renderRecurring();
+  });
+  document.querySelectorAll("[data-extend-rule]").forEach(b=>b.onclick=()=>{
+    const r=rules.find(x=>String(x.id)===b.dataset.extendRule);if(!r)return;
+    const from=prompt("Generate from date (YYYY-MM-DD)",todayISO());if(!from)return;
+    const until=prompt("Generate until date (YYYY-MM-DD)",r.endDate);if(!until)return;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(from)||!/^\d{4}-\d{2}-\d{2}$/.test(until)||until<from){
+      alert("Please enter valid dates in YYYY-MM-DD format.");return;
+    }
+    const count=generateLessons(r,from,until);
+    r.startDate=from;r.endDate=until;save();renderRecurring();
+    alert(count+" new lesson(s) generated. Existing dates were skipped.");
+  });
+}
+function generateLessons(r,start,end){
+  let count=0;
+  const d=new Date(start+"T12:00:00");
+  const last=new Date(end+"T12:00:00");
+  while(d<=last){
+    if(d.getDay()===Number(r.weekday)){
+      const date=localDate(d);
+      const exists=lessons.some(l=>String(l.ruleId)===String(r.id)&&l.date===date);
+      if(!exists){
+        const s=students.find(x=>String(x.id)===String(r.studentId));
+        lessons.push({
+          id:uid(),ruleId:r.id,studentId:r.studentId,date,time:r.time,
+          location:r.location,theme:r.theme,status:"Scheduled",
+          attendance:"Not marked",
+          payment:s&&s.paymentType!=="single"?"Deduct package":"Unpaid",
+          fee:s?Number(s.fee)||0:0,type:"Regular",notes:""
+        });
+        count++;
+      }
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return count;
+}
+function renderLessons(){
+  const sorted=[...lessons].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  app.innerHTML=`<h2>Lessons</h2><div class="sub">Lesson records are retained when cancelled.</div>
+  <div class="card"><div class="item-title">All lessons (${lessons.length})</div>
+  ${sorted.length?sorted.map(l=>`<div class="card">
+  <div class="item-title">${esc(l.date)} · ${esc(l.time||"No time")}</div>
+  <div>${esc(studentName(l.studentId))}</div>
+  <div class="meta">${esc(l.location||"No location")}<br>Theme: ${esc(l.theme||"Not set")}<br>Fee: ${money(l.fee)} · Payment: ${esc(l.payment||"Unpaid")}<br>Attendance: ${esc(l.attendance||"Not marked")}</div>
+  <span class="badge">${esc(l.status)}</span>
+  <div class="actions">
+  ${l.status!=="Cancelled"?`<button class="danger" data-cancel-lesson="${esc(l.id)}">Cancel lesson</button>`:""}
+  <button class="secondary" data-edit-lesson="${esc(l.id)}">Edit record</button>
+  </div></div>`).join(""):'<div class="empty">No lessons yet. Create a recurring class to generate lessons.</div>'}
+  </div>
+  <div class="card"><div class="item-title">Add a single lesson</div>
+  ${students.length?`<form id="singleForm">
+  ${selectField("Student","studentId",studentOptions(),"")}
+  <div class="row">${field("Date","date",todayISO(),"date",true)}${field("Time","time","16:00","time",true)}</div>
+  ${field("Location","location","","text",true)}
+  ${field("Theme","theme","","text",true)}
+  <button class="primary" type="submit">Add single lesson</button></form>`:'<div class="empty">Add a student first.</div>'}
+  </div>`;
+  document.querySelectorAll("[data-cancel-lesson]").forEach(b=>b.onclick=()=>{
+    const l=lessons.find(x=>String(x.id)===b.dataset.cancelLesson);if(!l)return;
+    if(confirm("Mark this lesson as cancelled? The record will be kept.")){
+      l.status="Cancelled";save();renderLessons();
+    }
+  });
+  document.querySelectorAll("[data-edit-lesson]").forEach(b=>b.onclick=()=>{
+    const l=lessons.find(x=>String(x.id)===b.dataset.editLesson);if(!l)return;
+    const theme=prompt("Lesson theme",l.theme||"");if(theme===null)return;
+    const attendance=prompt("Attendance: Not marked / Present / Absent / Makeup",l.attendance||"Not marked");if(attendance===null)return;
+    const payment=prompt("Payment: Unpaid / Paid / Deduct package / Trial / Makeup",l.payment||"Unpaid");if(payment===null)return;
+    l.theme=theme;l.attendance=attendance;l.payment=payment;save();renderLessons();
+  });
+  const sf=document.getElementById("singleForm");
+  if(sf)sf.addEventListener("submit",e=>{
+    e.preventDefault();const f=new FormData(sf);
+    const s=students.find(x=>String(x.id)===String(f.get("studentId")));if(!s)return;
+    lessons.push({
+      id:uid(),ruleId:null,studentId:s.id,date:String(f.get("date")),time:String(f.get("time")),
+      location:String(f.get("location")).trim(),theme:String(f.get("theme")).trim(),
+      status:"Scheduled",attendance:"Not marked",
+      payment:s.paymentType!=="single"?"Deduct package":"Unpaid",
+      fee:Number(s.fee)||0,type:"Single",notes:""
+    });
+    save();renderLessons();alert("Single lesson added.");
+  });
+}
+function renderBackup(){
+  app.innerHTML=`<h2>Backup & Restore</h2><div class="sub">Export or restore this browser's saved app data.</div>
+  <div class="notice"><b>Important:</b> This backup contains student details. Store the file somewhere private. The app currently has no encryption or login protection.</div>
+  <div class="card"><div class="item-title">Export backup</div>
+  <div class="meta">Includes students, recurring class rules and lesson records.</div>
+  <button class="primary" id="exportBtn">Download backup file</button></div>
+  <div class="card"><div class="item-title">Import backup</div>
+  <div class="meta">Importing replaces the current lists with the contents of the backup file. Export a backup first if you need to keep the current data.</div>
+  <label>Select a backup JSON file</label><input id="importFile" type="file" accept=".json,application/json">
+  <button class="danger" id="importBtn">Import and replace data</button></div>
+  <div class="card"><div class="item-title">Current data counts</div>
+  <div class="meta">Students: ${students.length}<br>Recurring classes: ${rules.length}<br>Lessons: ${lessons.length}</div></div>`;
+  document.getElementById("exportBtn").onclick=()=>{
+    const backup={app:"Little Artistz Manager",version:2,exportedAt:new Date().toISOString(),students,rules,lessons};
+    const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");a.href=url;a.download="little-artistz-backup-"+todayISO()+".json";
+    document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  };
+  document.getElementById("importBtn").onclick=()=>{
+    const file=document.getElementById("importFile").files[0];
+    if(!file){alert("Please choose a backup file first.");return}
+    if(!confirm("This will replace the current students, recurring classes and lessons. Continue?"))return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const data=JSON.parse(reader.result);
+        if(!data||!Array.isArray(data.students)||!Array.isArray(data.rules)||!Array.isArray(data.lessons))throw Error("Invalid backup");
+        students=data.students;rules=data.rules;lessons=data.lessons;save();render();
+        alert("Backup imported successfully.");
+      }catch(e){alert("Could not import this file. Please choose a valid Little Artistz backup.")}
+    };
+    reader.readAsText(file);
+  };
+}
+render();
+})();
 </script>
 </body>
 </html>
