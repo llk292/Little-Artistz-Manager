@@ -594,52 +594,185 @@ async function startSync(){
     if(page==="calendar")renderCalendar();
   }
 }
+
 function renderBackup(){
-  app.innerHTML=`<h2>Backup & Restore</h2><div class="sub">Export or restore this browser's saved app data.</div>
-  <div class="notice"><b>Important:</b> This backup contains student details. Store the file somewhere private. The app currently has no encryption or login protection. Importing does not automatically restore or reconcile Google Calendar events.</div>
-  <div class="card"><div class="item-title">Export backup</div>
-  <div class="meta">Includes students, recurring class rules and lesson records.</div>
-  <button class="primary" id="exportBtn">Download backup file</button></div>
-  <div class="card"><div class="item-title">Import backup</div>
-  <div class="meta">The file will be checked before import. A safety copy of the current lists will be downloaded first. Importing replaces the current lists.</div>
-  <label>Select a backup JSON file</label><input id="importFile" type="file" accept=".json,application/json">
-  <button class="danger" id="importBtn">Import and replace data</button></div>
-  <div class="card"><div class="item-title">Current data counts</div>
-  <div class="meta">Students: ${students.length}<br>Recurring classes: ${rules.length}<br>Lessons: ${lessons.length}</div></div>`;
-  document.getElementById("exportBtn").onclick=()=>downloadBackup({app:"Little Artistz Manager",version:3,exportedAt:new Date().toISOString(),students,rules,lessons},"little-artistz-backup-"+todayISO()+".json");
+  app.innerHTML=`<h2>Backup & Restore</h2>
+  <div class="sub">Export or restore this browser's saved app data.</div>
+  <div class="notice"><b>Important:</b> Backup files contain student details. Keep them private. Importing does not change Google Calendar events automatically. Review calendar links before syncing.</div>
+
+  <div class="card">
+    <div class="item-title">1. Export backup</div>
+    <div class="meta">Download your current students, recurring classes and lessons.</div>
+    <button class="primary" id="exportBtn">Download backup file</button>
+  </div>
+
+  <div class="card">
+    <div class="item-title">2. Import backup</div>
+    <div class="meta">Import replaces the current students, recurring classes and lessons. First export your current data and verify that the JSON file exists in the iPhone Files app.</div>
+    <label>Select a backup JSON file</label>
+    <input id="importFile" type="file" accept=".json,application/json">
+    <label style="display:flex;gap:8px;align-items:flex-start">
+      <input id="backupConfirmed" type="checkbox" style="width:auto;margin-top:3px">
+      <span>I exported my current data and confirmed the backup file exists in Files.</span>
+    </label>
+    <button class="danger" id="importBtn">Import and replace data</button>
+  </div>
+
+  <div class="card">
+    <div class="item-title">Current data counts</div>
+    <div class="meta">Students: ${students.length}<br>Recurring classes: ${rules.length}<br>Lessons: ${lessons.length}</div>
+  </div>`;
+
+  document.getElementById("exportBtn").onclick=()=>{
+    downloadBackup({
+      app:"Little Artistz Manager",
+      version:3,
+      exportedAt:new Date().toISOString(),
+      students,rules,lessons
+    },"little-artistz-backup-"+todayISO()+".json");
+    alert("Backup download requested. Open Files and confirm the JSON file exists before importing.");
+  };
+
   document.getElementById("importBtn").onclick=()=>{
     const file=document.getElementById("importFile").files[0];
-    if(!file){alert("Please choose a backup file first.");return}
-    if(file.size>5*1024*1024){alert("This backup file is larger than 5 MB. Please choose a smaller file.");return}
-    if(!confirm("This will replace the current students, recurring classes and lessons. A safety copy will be downloaded first. Continue?"))return;
+    const confirmed=document.getElementById("backupConfirmed").checked;
+
+    if(!confirmed){
+      alert("Please export your current data and confirm the backup file exists in Files first.");
+      return;
+    }
+    if(!file){
+      alert("Please choose a backup file first.");
+      return;
+    }
+    if(file.size>5*1024*1024){
+      alert("This backup file is larger than 5 MB.");
+      return;
+    }
+    if(!confirm("Replace all current students, recurring classes and lessons with the selected backup? Google Calendar will not be changed automatically."))return;
+
     const reader=new FileReader();
-    reader.onerror=()=>alert("Could not read this file. Your current data has not been changed.");
+
+    reader.onerror=()=>{
+      alert("Could not read this file. Current data has not been changed.");
+    };
+
     reader.onload=()=>{
       let data;
+
       try{
         data=JSON.parse(reader.result);
-        if(!data||data.app!=="Little Artistz Manager"||data.version!==3||!Array.isArray(data.students)||!Array.isArray(data.rules)||!Array.isArray(data.lessons))throw Error("Invalid backup structure");
-        const validRecords=(arr,required)=>arr.every(item=>item&&typeof item==="object"&&!Array.isArray(item)&&required.every(key=>Object.prototype.hasOwnProperty.call(item,key)));
-        if(!validRecords(data.students,["id","name"])||!validRecords(data.rules,["id","studentId","weekday","time"])||!validRecords(data.lessons,["id","studentId","date","time","status"]))throw Error("Invalid record structure");
-        if(data.students.some(x=>typeof x.name!=="string"||!String(x.id).trim())||data.lessons.some(x=>typeof x.date!=="string"||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(x.date)||typeof x.time!=="string"||!/^[0-9]{2}:[0-9]{2}$/.test(x.time)))throw Error("Invalid record values");
-      }catch(e){alert("Could not import this file. It is not a valid Little Artistz Manager version 3 backup. Your current data has not been changed.");return}
-      const old={students,rules,lessons};
-      try{
-        downloadBackup({app:"Little Artistz Manager",version:3,exportedAt:new Date().toISOString(),students:old.students,rules:old.rules,lessons:old.lessons},"little-artistz-safety-before-import-"+todayISO()+".json");
-        students=data.students;rules=data.rules;lessons=data.lessons;
-        save();editingLesson=null;editingStudent=null;render();
-        alert("Backup imported successfully. Google Calendar events were not changed. Please review the lesson list before syncing.");
+
+        if(!data ||
+           data.app!=="Little Artistz Manager" ||
+           data.version!==3 ||
+           !Array.isArray(data.students) ||
+           !Array.isArray(data.rules) ||
+           !Array.isArray(data.lessons)){
+          throw Error("Invalid backup structure");
+        }
+
+        const validRecords=(arr,required)=>
+          arr.every(item=>
+            item && typeof item==="object" &&
+            !Array.isArray(item) &&
+            required.every(key=>
+              Object.prototype.hasOwnProperty.call(item,key)
+            )
+          );
+
+        if(
+          !validRecords(data.students,["id","name"]) ||
+          !validRecords(data.rules,["id","studentId","weekday","time"]) ||
+          !validRecords(data.lessons,["id","studentId","date","time","status"])
+        )throw Error("Invalid record structure");
+
+        const uniqueIds=arr=>{
+          const ids=arr.map(x=>String(x.id));
+          return ids.every(id=>id.trim()!=="") &&
+            new Set(ids).size===ids.length;
+        };
+
+        if(
+          !uniqueIds(data.students) ||
+          !uniqueIds(data.rules) ||
+          !uniqueIds(data.lessons)
+        )throw Error("Missing or duplicate IDs");
+
+        if(data.students.some(x=>typeof x.name!=="string"||!x.name.trim()))
+          throw Error("Invalid student name");
+
+        const studentIds=new Set(data.students.map(x=>String(x.id)));
+
+        if(data.rules.some(x=>
+          !studentIds.has(String(x.studentId)) ||
+          !Number.isInteger(Number(x.weekday)) ||
+          Number(x.weekday)<0 || Number(x.weekday)>6 ||
+          !/^\d{2}:\d{2}$/.test(String(x.time))
+        ))throw Error("Invalid recurring class");
+
+        if(data.lessons.some(x=>
+          !studentIds.has(String(x.studentId)) ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(String(x.date)) ||
+          !/^\d{2}:\d{2}$/.test(String(x.time)) ||
+          typeof x.status!=="string"
+        ))throw Error("Invalid lesson");
+
       }catch(e){
-        students=old.students;rules=old.rules;lessons=old.lessons;
-        try{save()}catch(restoreError){}
-        alert("Import could not be completed. The app attempted to restore the previous lists. Please reload and check the data counts before continuing.");
-        renderBackup();
+        alert("Import rejected: the file is invalid or contains inconsistent records. Current data has not been changed.");
+        return;
       }
+
+      const old={
+        students,rules,lessons,
+        editingStudent,editingLesson
+      };
+
+      try{
+        students=data.students;
+        rules=data.rules;
+        lessons=data.lessons;
+        save();
+      }catch(e){
+        students=old.students;
+        rules=old.rules;
+        lessons=old.lessons;
+        editingStudent=old.editingStudent;
+        editingLesson=old.editingLesson;
+
+        alert("Import or saving failed. The app restored its previous in-memory lists where possible. Do not continue editing until you have checked the saved data.");
+        renderBackup();
+        return;
+      }
+
+      editingStudent=null;
+      editingLesson=null;
+      renderBackup();
+
+      alert(
+        "Import saved. Please check the student, recurring class and lesson counts. Google Calendar was not changed. Do not sync until you have reviewed the imported lessons and their event links."
+      );
     };
+
     reader.readAsText(file);
   };
 }
+
 function downloadBackup(backup,filename){
+  const blob=new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
   const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");a.href=url;a.download=filename;
