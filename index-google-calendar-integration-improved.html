@@ -104,11 +104,55 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 function esc(s){
   return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
+
 function save(){
-  localStorage.setItem(KEYS.students,JSON.stringify(students));
-  localStorage.setItem(KEYS.rules,JSON.stringify(rules));
-  localStorage.setItem(KEYS.lessons,JSON.stringify(lessons));
+  const entries = [
+    [KEYS.students, students],
+    [KEYS.rules, rules],
+    [KEYS.lessons, lessons]
+  ];
+
+  const previous = entries.map(([key]) => ({
+    key,
+    value: localStorage.getItem(key)
+  }));
+
+  try {
+    const serialized = entries.map(([key, value]) => [
+      key,
+      JSON.stringify(value)
+    ]);
+
+    serialized.forEach(([key, value]) => {
+      localStorage.setItem(key, value);
+    });
+  } catch (error) {
+    let restoreFailed = false;
+
+    previous.forEach(({key, value}) => {
+      try {
+        if (value === null) {
+          localStorage.removeItem(key);
+        } else {
+          localStorage.setItem(key, value);
+        }
+      } catch (restoreError) {
+        restoreFailed = true;
+      }
+    });
+
+    if (restoreFailed) {
+      throw new Error(
+        "Saving failed and previous data could not be fully restored. Do not reload or continue editing; export any recoverable data if possible."
+      );
+    }
+
+    throw new Error(
+      "Saving failed. The app attempted to restore the previous saved data. Please check the data before continuing."
+    );
+  }
 }
+
 function studentName(id){
   const s=students.find(x=>String(x.id)===String(id));
   return s?s.name:"Unknown student";
